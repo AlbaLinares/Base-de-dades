@@ -1,0 +1,47 @@
+---
+title: "Anàlisi de les dades"
+format: html
+editor: visual
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(stringr)
+library(forcats)
+library(tidyverse)
+library(readr)
+```
+
+```{r}
+dades_bcn <- read_csv("dades_bcn.csv")
+head(dades_bcn)
+```
+
+```{r}
+dades_bcn2 <- dades_bcn %>% 
+  select(year,month,bienestar,estres,no2bcn_12h,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)
+dades_bcn2
+```
+
+# Descripció de la taula de dades
+
+Notem que tenim 3.348 observacions que depenen de 14 variables diferents:
+
+-   year: any de l'enquesta.(qualitativa)
+-   month: mes de l'enquesta.(qualitativa)
+-   bienestar: respostes de l'enquesta de benestar.(quantitativa)
+-   estres: Respostes de l'enquesta sobre els nivells d'estrès.(quantitativa)
+-   no2bcn_12h: Nivells de diòxid de nitrogen (NO2) a Barcelona durant 12 hores.(quantitativa)
+-   no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores.(quantitativa)
+-   district: Districte de Barcelona on es va realitzar l'enquesta.(qualitativa)
+-   µgm3: Micrograms per metre cúbic.(quantitativa)
+-   age_yrs: Edat del participant en anys.(quantitativa)
+-   gender: sexe.(qualitativa)
+-   pm25bcn: Nivells de partícules (PM2.5) a Barcelona.(quantitativa)
+-   BCµg: Nivells de carboni negre (BC) en micrograms.(quantitativa)
+-   tmean_12h: Temperatura mitjana durant 12 hores.(quantitativa)
+-   humi_12h: Humitat durant 12 hores.(quantitativa)
