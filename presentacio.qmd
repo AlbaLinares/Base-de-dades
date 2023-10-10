@@ -1,0 +1,8 @@
+---
+title: "Presentacio Base de Dades P3"
+author: "Alba Linares i Maria Àngels Llobera"
+format: revealjs
+editor: visual
+---
+
+## Conjunt de dades
