@@ -18,8 +18,8 @@ library(readr)
 
 # Introducció
 
-
 ## Descripció del problema a tractar
+
 El canvi climàtic és un terme que s'utilitza per a descriure l'escalfament global del nostre planeta. També inclou altres canvis de llarg termini com podrien esser l'expansió dels deserts o el desglaç de l'Àrtic.
 
 Aquest problema és causat principalment per la crema de combustibles fòssils, la desforestació i algunes pràctiques agrícoles i industrials. En efecte, tots aquests motius es deuen a l'ésser humà.
@@ -27,23 +27,22 @@ Aquest problema és causat principalment per la crema de combustibles fòssils, 
 Aquesta qüestió d'abast global és un fet que ens preocupa molt i l'objectiu d'aquest estudi és veure com afecta el canvi climàtic al benestar de la població.
 
 ## Descripció de la taula de dades
-Per a respondre la pregunta anterior vàrem cercar a diverses fonts un conjunt de dades que s'adeqüés al nostre objectiu. A la plataforma https://www.kaggle.com/datasets hi vàrem trobar el nostre dataset idoni: ''Air Pollution and Mental Health" (https://www.kaggle.com/datasets/thedevastator/air-pollution-and-mental-health). En aquest conjunt de dades es recopila informació per a estudiar la influència de la contaminació de l'aire en la salut mental de la població.
 
+Per a respondre la pregunta anterior vàrem cercar a diverses fonts un conjunt de dades que s'adeqüés al nostre objectiu. A la plataforma https://www.kaggle.com/datasets hi vàrem trobar el nostre dataset idoni: ''Air Pollution and Mental Health" (https://www.kaggle.com/datasets/thedevastator/air-pollution-and-mental-health). En aquest conjunt de dades es recopila informació per a estudiar la influència de la contaminació de l'aire en la salut mental de la població.
 
 ```{r}
 dades_bcn <- read_csv("dades_bcn.csv")
 head(dades_bcn)
 ```
 
-D'aquest conjunt de dades, en vàrem decidir extreure algunes variables, atès que hi havia 95 observacions: algunes de les quals vàrem considerar supèrflues (el dia de la setmana o del mes en què es feia l'enquesta) i d'altres vàrem decidir que tampoc les seleccionaríem perquè creiem que no tenien res a veure amb la pregunta que volíem respondre (la velocitat del vent o el nivell d'educació). 
+D'aquest conjunt de dades, en vàrem decidir extreure algunes variables, atès que hi havia 95 observacions: algunes de les quals vàrem considerar supèrflues (el dia de la setmana o del mes en què es feia l'enquesta) i d'altres vàrem decidir que tampoc les seleccionaríem perquè creiem que no tenien res a veure amb la pregunta que volíem respondre (la velocitat del vent o el nivell d'educació).
 
 Per tant, vàrem seleccionar les següents variables
 
-- el mes i l'any de realització de l'enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.
-- el benestar i l'estrès de la persona enquestada
-- dades sobre la qualitat de l'aire i de l'ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s'enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l'aire i del clima.
-- dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l'afecta més o manco la contaminació.
-
+-   el mes i l'any de realització de l'enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.
+-   el benestar i l'estrès de la persona enquestada
+-   dades sobre la qualitat de l'aire i de l'ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s'enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l'aire i del clima.
+-   dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l'afecta més o manco la contaminació.
 
 Notem que com el nostre conjunt de dades ja estava prou ordenat (les files eren observacions i a cada columna trobàvem una variable), vàrem poder usar la gramàtica Tidyverse.
 
@@ -53,10 +52,6 @@ dades_bcn2 <- dades_bcn %>%
 
 dades_bcn2
 ```
-
-
-
-
 
 Estudiem ara com és el nostre tibble. Notem que tenim 3.348 observacions que depenen de 14 variables diferents:
 
@@ -75,18 +70,17 @@ Estudiem ara com és el nostre tibble. Notem que tenim 3.348 observacions que de
 -   tmean_12h: Temperatura mitjana durant 12 hores (quantitativa).
 -   humi_12h: Humitat durant 12 hores (quantitativa).
 
-
-
 # Anàlisi multivariant exploratòria de les dades
 
-A continuació, farem una anàlisi multivariant exploratòria de les dades 
+A continuació, farem una anàlisi multivariant exploratòria de les dades
 
-
-## Dades quantitatives: 
+## Dades quantitatives:
 
 En primer lloc, de les nostres dades quantitatives, en calcularem el valor esperat, el vector de variances i el vector de desviacions típiques. Notem que, com considerem que aquestes variables canvien al llarg de l'any, ho calcularem per mesos:
 
-```{r}
+Vector de valors esperats
+
+```{r,echo=FALSE}
 valor_esperat <- dades_bcn2 %>% 
   group_by(month) %>% 
   na.omit(.) %>% 
@@ -95,7 +89,9 @@ valor_esperat <- dades_bcn2 %>%
 valor_esperat
 ```
 
-```{r}
+Vector de variances
+
+```{r,echo=FALSE}
 v_variances <- dades_bcn2 %>% 
   group_by(month) %>% 
   na.omit(.) %>% 
@@ -104,7 +100,9 @@ v_variances <- dades_bcn2 %>%
 v_variances
 ```
 
-```{r}
+Vector de desviacions típiques
+
+```{r,echo=FALSE}
 v_sd <- dades_bcn2 %>% 
   group_by(month) %>% 
   na.omit(.) %>% 
@@ -112,5 +110,42 @@ v_sd <- dades_bcn2 %>%
 
 v_sd
 ```
+
+Les matriu de covariances i correlació son les següents.
+
+Matriu de covariances
+
+```{r, echo=FALSE}
+var_quant <- dades_bcn2 %>% 
+  na.omit(.) %>% 
+  select(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h)
+
+cov(var_quant)
+  
+```
+
+Matriu de correlació
+
+```{r, echo=FALSE}
+cor(var_quant)
+```
+
+Facem alguns contrasts de correlació:
+
+Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i els micrograms per metre cúbic.
+
+```{r}
+cor.test(var_quant$no2bcn_12h,var_quant$µgm3,alternative="greater")
+```
+
+Notem que el p-valor és major que 0.05 i per tant no podem asegurar que hi hagi correlació positiva entre aquestes dues variables.
+
+Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i el nivell de partícules.
+
+```{r}
+cor.test(var_quant$no2bcn_12h,var_quant$pm25bcn,alternative="greater")
+```
+
+Notem que el p-valor és menor que 0.05 i per tant podem dir que hi ha correlació positiva entre aquestes dues variables.
 
 # Conclusió:
