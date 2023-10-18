@@ -35,6 +35,8 @@ dades_bcn <- read_csv("dades_bcn.csv")
 head(dades_bcn)
 ```
 
+## Ajustament
+
 D'aquest conjunt de dades, en vàrem decidir extreure algunes variables, atès que hi havia 95 observacions: algunes de les quals vàrem considerar supèrflues (el dia de la setmana o del mes en què es feia l'enquesta) i d'altres vàrem decidir que tampoc les seleccionaríem perquè creiem que no tenien res a veure amb la pregunta que volíem respondre (la velocitat del vent o el nivell d'educació).
 
 Per tant, vàrem seleccionar les següents variables
@@ -48,18 +50,41 @@ Notem que com el nostre conjunt de dades ja estava prou ordenat (les files eren 
 
 ```{r}
 dades_bcn2 <- dades_bcn %>% 
-  select(year,month,bienestar,estres,no2bcn_12h,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)
+  select(year,month,bienestar,estres,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)
 
 dades_bcn2
 ```
+
+
+Notem que el nostre tibble no té la forma desitjada (considera com a variables numèriques o characters allò que nosaltres considerem factors). Canviam els valors de les variables bienestar i estres de un valor numèric a "Baix", "Mitjà" o "Alt" depenent del rang al que pertany.
+
+```{r}
+dades_bcn2 <- dades_bcn2 %>%
+  na.omit(.) %>% 
+  mutate(bienestar = cut(as.numeric(bienestar), breaks =  c(0,3,7,10), labels = c("Bajo","Medio","Alto"), include.lowest = TRUE))%>%
+  mutate(estres = cut(as.numeric(estres), breaks =  c(1,3,7,10), labels = c("Bajo","Medio","Alto"), include.lowest = TRUE)) %>% 
+  mutate(age_yrs = cut(as.numeric(age_yrs), breaks =  c(18,30,45,65,80),labels = c("Joven","Adulto Grupo 1","Adulto Grupo 2","Anciano"), include.lowest = TRUE))
+
+dades_bcn2
+``` 
+
+Mutam les variables district i gender a factor.
+
+```{r}
+dades_bcn2 <- dades_bcn2 %>%
+  mutate(district = as.factor(district))%>%
+  mutate(gender = as.factor(gender))
+dades_bcn2
+```
+
+## Característiques finals
 
 Estudiem ara com és el nostre tibble. Notem que tenim 3.348 observacions que depenen de 14 variables diferents:
 
 -   year: any de l'enquesta (qualitativa). Pot prendre 2 valors: 2020 o 2021
 -   month: mes de l'enquesta (qualitativa). Només pren 7 possibles valors (1,2,3,9,10,11,12)
--   bienestar: respostes de l'enquesta de benestar (qualitativa). Pren un valor enter entre 0 i 10.
+-   bienestar: respostes de l'enquesta de benestar (quantitativa). Pot prendre 3 valors: Bajo, Medio o Alto.
 -   estres: Respostes de l'enquesta sobre els nivells d'estrès (qualitativa). Pren els mateixos valors que la variable anterior. Notem que ambdues variables qualitatives es poden considerar ordinals.
--   no2bcn_12h: Nivells de diòxid de nitrogen (NO2) a Barcelona durant 12 hores (quantitativa).
 -   no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores (quantitativa).
 -   district: Districte de Barcelona on es va realitzar l'enquesta (variable qualitativa). Hi ha 11 districtes: 16, Ciutat Vella, Eixample, Gràcia, Horta-Guinardo, Les Corts, Nou Barris, Sant Andreu, Sant Martí, Sants-Montjuïc, Sarria Sant-Gervasi.
 -   µgm3: Micrograms per metre cúbic (quantitativa)
@@ -78,67 +103,78 @@ A continuació, farem una anàlisi multivariant exploratòria de les dades
 
 En primer lloc, de les nostres dades quantitatives, en calcularem el valor esperat, el vector de variances i el vector de desviacions típiques. Notem que, com considerem que aquestes variables canvien al llarg de l'any, ho calcularem per mesos:
 
-Vector de valors esperats
+Vector de valors esperats:
 
 ```{r,echo=FALSE}
 valor_esperat <- dades_bcn2 %>% 
   group_by(month) %>% 
   na.omit(.) %>% 
-  summarise_at(vars(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), mean)
+  summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), mean)
 
 valor_esperat
 ```
 
-Vector de variances
+Vector de variances:
 
 ```{r,echo=FALSE}
 v_variances <- dades_bcn2 %>% 
   group_by(month) %>% 
   na.omit(.) %>% 
-  summarise_at(vars(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), var)
+  summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), var)
 
 v_variances
 ```
 
-Vector de desviacions típiques
+Vector de desviacions típiques:
 
 ```{r,echo=FALSE}
 v_sd <- dades_bcn2 %>% 
   group_by(month) %>% 
   na.omit(.) %>% 
-  summarise_at(vars(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), sd)
+  summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), sd)
 
 v_sd
 ```
 
-Les matriu de covariances i correlació son les següents.
+Les matriu de covariances i correlació són les següents.
 
 Matriu de covariances
 
 ```{r, echo=FALSE}
 var_quant <- dades_bcn2 %>% 
   na.omit(.) %>% 
-  select(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h)
+  select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h)
 
 cov(var_quant)
   
 ```
-
-Matriu de correlació
+Matriu de correlació:
 
 ```{r, echo=FALSE}
 cor(var_quant)
 ```
+```{r}
+library(ggcorrplot)
+dades_bcn2 %>%
+  na.omit(.) %>% 
+  select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h) %>% 
+  cor(.) %>% 
+  ggcorrplot(., hc.order = TRUE,
+        type = "lower",
+        colors = c("#6D9EC1",
+                    "yellow", "#E46726"))
+```
+
 
 Facem alguns contrasts de correlació:
 
-Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i els micrograms per metre cúbic.
+Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i els nivells de carboni negre (BC) en micrograms.
 
 ```{r}
-cor.test(var_quant$no2bcn_12h,var_quant$µgm3,alternative="greater")
+cor.test(var_quant$no2gps_12h,var_quant$BCμg,alternative="greater")
 ```
 
-Notem que el p-valor és major que 0.05 i per tant no podem asegurar que hi hagi correlació positiva entre aquestes dues variables.
+Notem que el p-valor és menor que 0.05 i, per tant, podem asegurar que hi hagi correlació positiva entre aquestes dues variables.
 
 Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i el nivell de partícules.
 
@@ -147,5 +183,31 @@ cor.test(var_quant$no2bcn_12h,var_quant$pm25bcn,alternative="greater")
 ```
 
 Notem que el p-valor és menor que 0.05 i per tant podem dir que hi ha correlació positiva entre aquestes dues variables.
+
+## Dades qualitatives:
+
+Recordem que el nostre estudi volia veure la relació entre la qualitat de vida dels habitants de Barcelona i la qualitat de l'aire que respiren. Vegem si trobem similituds en els perfils de la població:
+
+
+```{r}
+library(StatMatch)
+library(proxy)
+
+#ordenam per edat, per veure si hi ha similituds
+bienestar_estres <- dades_bcn2 %>% 
+  arrange(age_yrs) %>% 
+  select(bienestar,estres) 
+
+distancia = distance(bienestar_estres)
+distancia
+
+#library(philentropy)
+#distancia <- distance(bienestar_estres, method = "bhattacharyya")
+
+library(factoextra)
+fviz_dist(as.dist(distancia))
+  
+  
+```
 
 # Conclusió:

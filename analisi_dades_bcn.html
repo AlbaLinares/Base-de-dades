@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Anàlisi de les dades</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="analisi_dades_bcn_files/libs/clipboard/clipboard.min.js"></script>
+<script src="analisi_dades_bcn_files/libs/quarto-html/quarto.js"></script>
+<script src="analisi_dades_bcn_files/libs/quarto-html/popper.min.js"></script>
+<script src="analisi_dades_bcn_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="analisi_dades_bcn_files/libs/quarto-html/anchor.min.js"></script>
+<link href="analisi_dades_bcn_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="analisi_dades_bcn_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="analisi_dades_bcn_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="analisi_dades_bcn_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="analisi_dades_bcn_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Anàlisi de les dades</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ lubridate 1.9.2     ✔ readr     2.1.4</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="introducció" class="level1">
+<h1>Introducció</h1>
+<section id="descripció-del-problema-a-tractar" class="level2">
+<h2 class="anchored" data-anchor-id="descripció-del-problema-a-tractar">Descripció del problema a tractar</h2>
+<p>El canvi climàtic és un terme que s’utilitza per a descriure l’escalfament global del nostre planeta. També inclou altres canvis de llarg termini com podrien esser l’expansió dels deserts o el desglaç de l’Àrtic.</p>
+<p>Aquest problema és causat principalment per la crema de combustibles fòssils, la desforestació i algunes pràctiques agrícoles i industrials. En efecte, tots aquests motius es deuen a l’ésser humà.</p>
+<p>Aquesta qüestió d’abast global és un fet que ens preocupa molt i l’objectiu d’aquest estudi és veure com afecta el canvi climàtic al benestar de la població.</p>
+</section>
+<section id="descripció-de-la-taula-de-dades" class="level2">
+<h2 class="anchored" data-anchor-id="descripció-de-la-taula-de-dades">Descripció de la taula de dades</h2>
+<p>Per a respondre la pregunta anterior vàrem cercar a diverses fonts un conjunt de dades que s’adeqüés al nostre objectiu. A la plataforma https://www.kaggle.com/datasets hi vàrem trobar el nostre dataset idoni: ’’Air Pollution and Mental Health” (https://www.kaggle.com/datasets/thedevastator/air-pollution-and-mental-health). En aquest conjunt de dades es recopila informació per a estudiar la influència de la contaminació de l’aire en la salut mental de la població.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dades_bcn <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dades_bcn.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3348 Columns: 95
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (27): mentalhealth_survey, actividadfisica, ordenador, dieta, alcohol, ...
+dbl  (66): ID_Zenodo, date_all, year, month, day, dayoftheweek, hour, occurr...
+time  (2): Houron, Houroff
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dades_bcn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 95
+  ID_Zenodo date_all  year month   day dayoftheweek  hour mentalhealth_survey
+      &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;              
+1        71    22190  2020    10     2            4    18 Yes                
+2       112    22202  2020    10    14            2    22 Yes                
+3       110    22217  2020    10    29            3    18 Yes                
+4       115    22222  2020    11     3            1    18 Yes                
+5       135    22231  2020    11    12            3    22 Yes                
+6       216    22252  2020    12     3            3    19 Yes                
+# ℹ 87 more variables: occurrence_mental &lt;dbl&gt;, bienestar &lt;dbl&gt;, energia &lt;dbl&gt;,
+#   estres &lt;dbl&gt;, sueno &lt;dbl&gt;, horasfuera &lt;dbl&gt;, actividadfisica &lt;chr&gt;,
+#   ordenador &lt;chr&gt;, dieta &lt;chr&gt;, alcohol &lt;chr&gt;, drogas &lt;chr&gt;, bebida &lt;chr&gt;,
+#   enfermo &lt;chr&gt;, otrofactor &lt;chr&gt;, stroop_test &lt;chr&gt;,
+#   occurrence_stroop &lt;dbl&gt;, mean_incongruent &lt;dbl&gt;, correct &lt;dbl&gt;,
+#   response_duration_ms &lt;dbl&gt;, performance &lt;dbl&gt;, mean_congruent &lt;dbl&gt;,
+#   inhib_control &lt;dbl&gt;, z_performance &lt;dbl&gt;, z_mean_incongruent &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>D’aquest conjunt de dades, en vàrem decidir extreure algunes variables, atès que hi havia 95 observacions: algunes de les quals vàrem considerar supèrflues (el dia de la setmana o del mes en què es feia l’enquesta) i d’altres vàrem decidir que tampoc les seleccionaríem perquè creiem que no tenien res a veure amb la pregunta que volíem respondre (la velocitat del vent o el nivell d’educació).</p>
+<p>Per tant, vàrem seleccionar les següents variables</p>
+<ul>
+<li>el mes i l’any de realització de l’enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.</li>
+<li>el benestar i l’estrès de la persona enquestada</li>
+<li>dades sobre la qualitat de l’aire i de l’ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s’enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l’aire i del clima.</li>
+<li>dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l’afecta més o manco la contaminació.</li>
+</ul>
+<p>Notem que com el nostre conjunt de dades ja estava prou ordenat (les files eren observacions i a cada columna trobàvem una variable), vàrem poder usar la gramàtica Tidyverse.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dades_bcn2 <span class="ot">&lt;-</span> dades_bcn <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year,month,bienestar,estres,no2bcn_12h,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>dades_bcn2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3,348 × 14
+    year month bienestar estres no2bcn_12h no2gps_12h district      µgm3 age_yrs
+   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+ 1  2020    10         9      1       35.7       23.6 Horta-Guina…  NA        49
+ 2  2020    10         8      5       22.7       24.5 Gràcia        19.7      37
+ 3  2020    10         9      8       41.0       46.9 Eixample      28.5      28
+ 4  2020    11         3      5       33.7       22.7 Sant Martí    15.7      29
+ 5  2020    11         9      6       44.7       NA   Sants-Montj…  26.7      33
+ 6  2020    12         7      2       32.8       36.6 Gràcia        33.5      25
+ 7  2021     2         3      5       38.7       40.6 Sant Martí    NA        45
+ 8  2020    11         6      1       18.3       18.6 Gràcia        10.6      36
+ 9  2020    11         7     NA       27.8       12.9 Horta-Guina…  18.3      52
+10  2020    11         9      1       18.3       18.2 Ciutat Vella  37.5      28
+# ℹ 3,338 more rows
+# ℹ 5 more variables: gender &lt;chr&gt;, pm25bcn &lt;dbl&gt;, BCμg &lt;dbl&gt;, tmean_12h &lt;dbl&gt;,
+#   humi_12h &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Estudiem ara com és el nostre tibble. Notem que tenim 3.348 observacions que depenen de 14 variables diferents:</p>
+<ul>
+<li>year: any de l’enquesta (qualitativa). Pot prendre 2 valors: 2020 o 2021</li>
+<li>month: mes de l’enquesta (qualitativa). Només pren 7 possibles valors (1,2,3,9,10,11,12)</li>
+<li>bienestar: respostes de l’enquesta de benestar (qualitativa). Pren un valor enter entre 0 i 10.</li>
+<li>estres: Respostes de l’enquesta sobre els nivells d’estrès (qualitativa). Pren els mateixos valors que la variable anterior. Notem que ambdues variables qualitatives es poden considerar ordinals.</li>
+<li>no2bcn_12h: Nivells de diòxid de nitrogen (NO2) a Barcelona durant 12 hores (quantitativa).</li>
+<li>no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores (quantitativa).</li>
+<li>district: Districte de Barcelona on es va realitzar l’enquesta (variable qualitativa). Hi ha 11 districtes: 16, Ciutat Vella, Eixample, Gràcia, Horta-Guinardo, Les Corts, Nou Barris, Sant Andreu, Sant Martí, Sants-Montjuïc, Sarria Sant-Gervasi.</li>
+<li>µgm3: Micrograms per metre cúbic (quantitativa)</li>
+<li>age_yrs: Edat del participant en anys (quantitativa). Pren valors enters entre 18 i 76.</li>
+<li>gender: sexe (qualitativa). Hi ha 3 possibles resultats: “Hombre”, “Mujer” i “Otra”.</li>
+<li>pm25bcn: Nivells de partícules (PM2.5) a Barcelona (quantitativa).</li>
+<li>BCµg: Nivells de carboni negre (BC) en micrograms (quantitativa)</li>
+<li>tmean_12h: Temperatura mitjana durant 12 hores (quantitativa).</li>
+<li>humi_12h: Humitat durant 12 hores (quantitativa).</li>
+</ul>
+</section>
+</section>
+<section id="anàlisi-multivariant-exploratòria-de-les-dades" class="level1">
+<h1>Anàlisi multivariant exploratòria de les dades</h1>
+<p>A continuació, farem una anàlisi multivariant exploratòria de les dades</p>
+<section id="dades-quantitatives" class="level2">
+<h2 class="anchored" data-anchor-id="dades-quantitatives">Dades quantitatives:</h2>
+<p>En primer lloc, de les nostres dades quantitatives, en calcularem el valor esperat, el vector de variances i el vector de desviacions típiques. Notem que, com considerem que aquestes variables canvien al llarg de l’any, ho calcularem per mesos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>valor_esperat <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), mean)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>valor_esperat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 9
+  month no2bcn_12h no2gps_12h  µgm3 age_yrs pm25bcn  BCμg tmean_12h humi_12h
+  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1     1       28.6       30.5  26.8    41.9    12.6 0.750      13.5     57.0
+2     2       30.9       30.1  24.4    51.8    15.1 0.903      14.4     68.7
+3     3       28.4       18.6  14.7    58      19.1 0.757      13.9     70.0
+4     9       23.4       23.7  25.5    38.2    12.7 0.611      22.1     51.0
+5    10       27.6       26.9  26.0    38.4    12.3 0.822      19.2     56.4
+6    11       34.5       35.2  27.7    38.6    14.6 1.11       16.9     67.7
+7    12       35.4       38.3  25.5    31.8    13.2 1.04       13.4     59.4</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>v_variances <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), var)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>v_variances</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 9
+  month no2bcn_12h no2gps_12h   µgm3 age_yrs pm25bcn   BCμg tmean_12h humi_12h
+  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1     1       295.       350.   5.57    21.4    1.90  0.196      4.49     153.
+2     2       169.       169.  47.1    139.    33.4   0.256      3.56     157.
+3     3        NA         NA   NA       NA     NA    NA         NA         NA 
+4     9       108.       120.  82.6     98.5   11.9   0.122      6.54     209.
+5    10       152.       183.  55.4    124.     9.91  0.235      3.45     253.
+6    11       140.       160.  97.1    130.    12.5   0.222      3.01     156.
+7    12       299.       324. 104.     153.    12.6   0.858      2.84     175.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>v_sd <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), sd)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>v_sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 9
+  month no2bcn_12h no2gps_12h  µgm3 age_yrs pm25bcn   BCμg tmean_12h humi_12h
+  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1     1       17.2       18.7  2.36    4.62    1.38  0.443      2.12     12.4
+2     2       13.0       13.0  6.86   11.8     5.78  0.506      1.89     12.5
+3     3       NA         NA   NA      NA      NA    NA         NA        NA  
+4     9       10.4       11.0  9.09    9.92    3.45  0.349      2.56     14.4
+5    10       12.3       13.5  7.44   11.1     3.15  0.485      1.86     15.9
+6    11       11.8       12.6  9.85   11.4     3.54  0.471      1.73     12.5
+7    12       17.3       18.0 10.2    12.4     3.55  0.926      1.69     13.2</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusió" class="level1">
+<h1>Conclusió:</h1>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
