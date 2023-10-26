@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Alba Linares i Maria Àngels Llobera">
 
 <title>Anàlisi de les dades</title>
 <style>
@@ -68,6 +69,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="analisi_dades_bcn_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="analisi_dades_bcn_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -86,6 +89,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Alba Linares i Maria Àngels Llobera </p>
+          </div>
+  </div>
     
   
     
@@ -95,8 +104,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
 Attaching package: 'dplyr'</code></pre>
@@ -111,23 +118,14 @@ Attaching package: 'dplyr'</code></pre>
 
     intersect, setdiff, setequal, union</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ lubridate 1.9.2     ✔ readr     2.1.4</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✔ lubridate 1.9.2     ✔ readr     2.1.4
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="introducció" class="level1">
 <h1>Introducció</h1>
@@ -141,7 +139,6 @@ Attaching package: 'dplyr'</code></pre>
 <h2 class="anchored" data-anchor-id="descripció-de-la-taula-de-dades">Descripció de la taula de dades</h2>
 <p>Per a respondre la pregunta anterior vàrem cercar a diverses fonts un conjunt de dades que s’adeqüés al nostre objectiu. A la plataforma https://www.kaggle.com/datasets hi vàrem trobar el nostre dataset idoni: ’’Air Pollution and Mental Health” (https://www.kaggle.com/datasets/thedevastator/air-pollution-and-mental-health). En aquest conjunt de dades es recopila informació per a estudiar la influència de la contaminació de l’aire en la salut mental de la població.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dades_bcn <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dades_bcn.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 3348 Columns: 95
 ── Column specification ────────────────────────────────────────────────────────
@@ -153,7 +150,6 @@ time  (2): Houron, Houroff
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dades_bcn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 95
   ID_Zenodo date_all  year month   day dayoftheweek  hour mentalhealth_survey
@@ -173,56 +169,122 @@ time  (2): Houron, Houroff
 #   inhib_control &lt;dbl&gt;, z_performance &lt;dbl&gt;, z_mean_incongruent &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
+</section>
+<section id="ajustament" class="level2">
+<h2 class="anchored" data-anchor-id="ajustament">Ajustament</h2>
 <p>D’aquest conjunt de dades, en vàrem decidir extreure algunes variables, atès que hi havia 95 observacions: algunes de les quals vàrem considerar supèrflues (el dia de la setmana o del mes en què es feia l’enquesta) i d’altres vàrem decidir que tampoc les seleccionaríem perquè creiem que no tenien res a veure amb la pregunta que volíem respondre (la velocitat del vent o el nivell d’educació).</p>
 <p>Per tant, vàrem seleccionar les següents variables</p>
 <ul>
-<li>el mes i l’any de realització de l’enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.</li>
-<li>el benestar i l’estrès de la persona enquestada</li>
-<li>dades sobre la qualitat de l’aire i de l’ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s’enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l’aire i del clima.</li>
-<li>dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l’afecta més o manco la contaminació.</li>
+<li><p>el mes i l’any de realització de l’enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.</p></li>
+<li><p>l’ocurrencia de problemes mentals i l’estrès de la persona enquestada</p></li>
+<li><p>dades sobre la qualitat de l’aire i de l’ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s’enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l’aire i del clima.</p></li>
+<li><p>dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l’afecta més o manco la contaminació.</p></li>
 </ul>
 <p>Notem que com el nostre conjunt de dades ja estava prou ordenat (les files eren observacions i a cada columna trobàvem una variable), vàrem poder usar la gramàtica Tidyverse.</p>
+<p>Notem que el nostre tibble no té la forma desitjada (considera com a variables numèriques o characters allò que nosaltres considerem factors). Canviam els valors de les variables occurrence_mental i estres de un valor numèric a “Baix”, “Mitjà” o “Alt” depenent del rang al que pertany.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dades_bcn2 <span class="ot">&lt;-</span> dades_bcn <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year,month,bienestar,estres,no2bcn_12h,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>dades_bcn2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dades_bcn2 <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">occurrence_mental =</span> <span class="fu">cut</span>(<span class="fu">as.numeric</span>(occurrence_mental), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">8</span>,<span class="dv">14</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Bajo"</span>,<span class="st">"Medio"</span>,<span class="st">"Alto"</span>), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">estres =</span> <span class="fu">cut</span>(<span class="fu">as.numeric</span>(estres), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">10</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Bajo"</span>,<span class="st">"Medio"</span>,<span class="st">"Alto"</span>), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">age_yrs =</span> <span class="fu">cut</span>(<span class="fu">as.numeric</span>(age_yrs), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">30</span>,<span class="dv">45</span>,<span class="dv">65</span>,<span class="dv">80</span>),<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Joven"</span>,<span class="st">"Adulto Grupo 1"</span>,<span class="st">"Adulto Grupo 2"</span>,<span class="st">"Anciano"</span>), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Mutam les variables district i gender a factor.</p>
+<p>Canviam el valor de la variable district: Agrupam els districtes en funció de la zona a la que pertanyen.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dades_bcn2 <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Gràcia"</span> <span class="sc">~</span> <span class="st">"Centre"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Ciutat Vella"</span> <span class="sc">~</span> <span class="st">"Est"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Eixample"</span> <span class="sc">~</span> <span class="st">"Centre"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Sant Andreu"</span> <span class="sc">~</span> <span class="st">"Nord"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Horta-Guinardo"</span> <span class="sc">~</span> <span class="st">"Nord"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Sarria Sant-Gervasi"</span> <span class="sc">~</span> <span class="st">"Oest"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Sant Martí"</span> <span class="sc">~</span> <span class="st">"Est"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Les Corts "</span> <span class="sc">~</span> <span class="st">"Oest"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Nou Barris"</span> <span class="sc">~</span> <span class="st">"Nord"</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"Sants-Montjuïc"</span> <span class="sc">~</span> <span class="st">"Sud"</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>district <span class="sc">==</span> <span class="st">"16"</span> <span class="sc">~</span> <span class="st">"Sud"</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">as.factor</span>(district))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finalment, la taula de dades amb les que farem feina és la següent:</p>
+<div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3,348 × 14
-    year month bienestar estres no2bcn_12h no2gps_12h district      µgm3 age_yrs
-   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
- 1  2020    10         9      1       35.7       23.6 Horta-Guina…  NA        49
- 2  2020    10         8      5       22.7       24.5 Gràcia        19.7      37
- 3  2020    10         9      8       41.0       46.9 Eixample      28.5      28
- 4  2020    11         3      5       33.7       22.7 Sant Martí    15.7      29
- 5  2020    11         9      6       44.7       NA   Sants-Montj…  26.7      33
- 6  2020    12         7      2       32.8       36.6 Gràcia        33.5      25
- 7  2021     2         3      5       38.7       40.6 Sant Martí    NA        45
- 8  2020    11         6      1       18.3       18.6 Gràcia        10.6      36
- 9  2020    11         7     NA       27.8       12.9 Horta-Guina…  18.3      52
-10  2020    11         9      1       18.3       18.2 Ciutat Vella  37.5      28
-# ℹ 3,338 more rows
-# ℹ 5 more variables: gender &lt;chr&gt;, pm25bcn &lt;dbl&gt;, BCμg &lt;dbl&gt;, tmean_12h &lt;dbl&gt;,
-#   humi_12h &lt;dbl&gt;</code></pre>
+<pre><code>Rows: 2,292
+Columns: 13
+$ year              &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020…
+$ month             &lt;dbl&gt; 10, 10, 11, 12, 11, 11, 10, 11, 10, 10, 12, 11, 12, …
+$ occurrence_mental &lt;fct&gt; Bajo, Alto, Alto, Medio, Medio, Medio, Bajo, Bajo, M…
+$ estres            &lt;fct&gt; Medio, Alto, Medio, Bajo, Bajo, Bajo, Medio, Bajo, A…
+$ no2gps_12h        &lt;dbl&gt; 24.486559, 46.942627, 22.667779, 36.572923, 18.63899…
+$ district          &lt;fct&gt; Centre, Centre, Est, Centre, Centre, Est, Centre, Ce…
+$ µgm3              &lt;dbl&gt; 19.66000, 28.48000, 15.72000, 33.49000, 10.56000, 37…
+$ age_yrs           &lt;fct&gt; Adulto Grupo 1, Joven, Joven, Joven, Adulto Grupo 1,…
+$ gender            &lt;fct&gt; Mujer, Mujer, Mujer, Hombre, Mujer, Mujer, Hombre, H…
+$ pm25bcn           &lt;dbl&gt; 8.160000, 13.383333, 16.533333, 10.266667, 8.916667,…
+$ BCμg              &lt;dbl&gt; 0.5009459, 1.5075053, 1.1670614, 0.6141918, 0.285484…
+$ tmean_12h         &lt;dbl&gt; 15.60833, 19.34167, 18.25833, 11.50417, 14.36667, 14…
+$ humi_12h          &lt;dbl&gt; 52.33333, 68.29167, 78.20833, 50.29167, 81.79167, 81…</code></pre>
 </div>
 </div>
+<p>Vegem la distribució de les dades en funcio de l’edat i del districte mitjançant un diagrama de mosaic.</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: grid</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="característiques-finals" class="level2">
+<h2 class="anchored" data-anchor-id="característiques-finals">Característiques finals</h2>
 <p>Estudiem ara com és el nostre tibble. Notem que tenim 3.348 observacions que depenen de 14 variables diferents:</p>
 <ul>
-<li>year: any de l’enquesta (qualitativa). Pot prendre 2 valors: 2020 o 2021</li>
-<li>month: mes de l’enquesta (qualitativa). Només pren 7 possibles valors (1,2,3,9,10,11,12)</li>
-<li>bienestar: respostes de l’enquesta de benestar (qualitativa). Pren un valor enter entre 0 i 10.</li>
-<li>estres: Respostes de l’enquesta sobre els nivells d’estrès (qualitativa). Pren els mateixos valors que la variable anterior. Notem que ambdues variables qualitatives es poden considerar ordinals.</li>
-<li>no2bcn_12h: Nivells de diòxid de nitrogen (NO2) a Barcelona durant 12 hores (quantitativa).</li>
-<li>no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores (quantitativa).</li>
-<li>district: Districte de Barcelona on es va realitzar l’enquesta (variable qualitativa). Hi ha 11 districtes: 16, Ciutat Vella, Eixample, Gràcia, Horta-Guinardo, Les Corts, Nou Barris, Sant Andreu, Sant Martí, Sants-Montjuïc, Sarria Sant-Gervasi.</li>
-<li>µgm3: Micrograms per metre cúbic (quantitativa)</li>
-<li>age_yrs: Edat del participant en anys (quantitativa). Pren valors enters entre 18 i 76.</li>
-<li>gender: sexe (qualitativa). Hi ha 3 possibles resultats: “Hombre”, “Mujer” i “Otra”.</li>
-<li>pm25bcn: Nivells de partícules (PM2.5) a Barcelona (quantitativa).</li>
-<li>BCµg: Nivells de carboni negre (BC) en micrograms (quantitativa)</li>
-<li>tmean_12h: Temperatura mitjana durant 12 hores (quantitativa).</li>
-<li>humi_12h: Humitat durant 12 hores (quantitativa).</li>
+<li><p>year: any de l’enquesta (qualitativa). Pot prendre 2 valors: 2020 o 2021</p></li>
+<li><p>month: mes de l’enquesta (qualitativa). Només pren 7 possibles valors (1,2,3,9,10,11,12)</p></li>
+<li><p>ocurrence_mental: respostes de l’enquesta de benestar (quantitativa). Pot prendre 3 valors: Bajo, Medio o Alto.</p></li>
+<li><p>estres: Respostes de l’enquesta sobre els nivells d’estrès (qualitativa). Pren els mateixos valors que la variable anterior. Notem que ambdues variables qualitatives es poden considerar ordinals.</p></li>
+<li><p>no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores (quantitativa).</p></li>
+<li><p>district: la zona on es troba el districte de Barcelona on es va realitzar l’enquesta (variable qualitativa). Hi ha 5 zones: “Nord”, “Est”, “Sud”, “Oest”, “Centre”.</p></li>
+<li><p>µgm3: Micrograms per metre cúbic (quantitativa)</p></li>
+<li><p>age_yrs: Grup d’edat al que pertany(variable qualitativa): “Joven”,“Adulto Grupo 1”,“Adulto Grupo 2” o “Anciano”.</p></li>
+<li><p>gender: sexe (qualitativa). Hi ha 3 possibles resultats: “Hombre”, “Mujer” i “Otra”.</p></li>
+<li><p>pm25bcn: Nivells de partícules (PM2.5) a Barcelona (quantitativa).</p></li>
+<li><p>BCµg: Nivells de carboni negre (BC) en micrograms (quantitativa)</p></li>
+<li><p>tmean_12h: Temperatura mitjana durant 12 hores (quantitativa).</p></li>
+<li><p>humi_12h: Humitat durant 12 hores (quantitativa).</p></li>
 </ul>
+</section>
+<section id="significat-de-les-dades-ambientalsvariables-quantitatives" class="level2">
+<h2 class="anchored" data-anchor-id="significat-de-les-dades-ambientalsvariables-quantitatives">Significat de les dades ambientals(variables quantitatives)</h2>
+<p>El NO2 és un gas que es produeix a partir de la combustió de combustibles fòssils i és un contaminant de l’aire.</p>
+<p>Les partícules en suspensió (PM) són un component important de la contaminació de l’aire</p>
+<p>Les partícules fines PM2.5 són partícules de mida molt petita que poden penetrar profundament als pulmons i causar problemes respiratoris i altres efectes adversos per a la salut.</p>
+<p>El carboni negre (BC) és un component de la contaminació de l’aire i es genera per la combustió incompleta de combustibles fòssils.</p>
+<p>La temperatura pot influir en la qualitat de l’aire, ja que les condicions climàtiques poden afectar la dispersió de contaminants i la formació d’ozó.</p>
+<p>L’humitat pot influir en la qualitat de l’aire en relació amb la formació de partícules i la concentració de determinats contaminants.</p>
 </section>
 </section>
 <section id="anàlisi-multivariant-exploratòria-de-les-dades" class="level1">
@@ -231,70 +293,277 @@ time  (2): Houron, Houroff
 <section id="dades-quantitatives" class="level2">
 <h2 class="anchored" data-anchor-id="dades-quantitatives">Dades quantitatives:</h2>
 <p>En primer lloc, de les nostres dades quantitatives, en calcularem el valor esperat, el vector de variances i el vector de desviacions típiques. Notem que, com considerem que aquestes variables canvien al llarg de l’any, ho calcularem per mesos:</p>
+<p>Vector de valors esperats:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>valor_esperat <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), mean)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>valor_esperat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 9
-  month no2bcn_12h no2gps_12h  µgm3 age_yrs pm25bcn  BCμg tmean_12h humi_12h
-  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1     1       28.6       30.5  26.8    41.9    12.6 0.750      13.5     57.0
-2     2       30.9       30.1  24.4    51.8    15.1 0.903      14.4     68.7
-3     3       28.4       18.6  14.7    58      19.1 0.757      13.9     70.0
-4     9       23.4       23.7  25.5    38.2    12.7 0.611      22.1     51.0
-5    10       27.6       26.9  26.0    38.4    12.3 0.822      19.2     56.4
-6    11       34.5       35.2  27.7    38.6    14.6 1.11       16.9     67.7
-7    12       35.4       38.3  25.5    31.8    13.2 1.04       13.4     59.4</code></pre>
+<pre><code># A tibble: 7 × 7
+  month no2gps_12h  µgm3 pm25bcn  BCμg tmean_12h humi_12h
+  &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1     1       30.5  26.6    12.7 0.755      13.5     57.8
+2     2       30.1  24.4    15.1 0.903      14.4     68.7
+3     3       18.6  14.7    19.1 0.757      13.9     70.0
+4     9       23.9  25.5    12.8 0.619      22.2     51.1
+5    10       27.0  26.0    12.3 0.816      19.2     56.2
+6    11       35.6  27.6    14.6 1.12       16.9     67.6
+7    12       38.5  25.6    13.2 1.04       13.4     59.4</code></pre>
+</div>
+</div>
+<p>Vector de variances:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 7
+  month no2gps_12h   µgm3 pm25bcn   BCμg tmean_12h humi_12h
+  &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1     1       379.   5.58    1.85  0.212      4.86     156.
+2     2       169.  47.1    33.4   0.256      3.56     157.
+3     3        NA   NA      NA    NA         NA         NA 
+4     9       120.  85.0    12.1   0.122      6.48     210.
+5    10       184.  56.1     9.89  0.235      3.50     250.
+6    11       161.  99.2    12.4   0.224      2.94     155.
+7    12       325. 104.     12.7   0.875      2.87     167.</code></pre>
+</div>
+</div>
+<p>Vector de desviacions típiques:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 7
+  month no2gps_12h  µgm3 pm25bcn   BCμg tmean_12h humi_12h
+  &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1     1       19.5  2.36    1.36  0.461      2.20     12.5
+2     2       13.0  6.86    5.78  0.506      1.89     12.5
+3     3       NA   NA      NA    NA         NA        NA  
+4     9       11.0  9.22    3.48  0.349      2.55     14.5
+5    10       13.6  7.49    3.15  0.485      1.87     15.8
+6    11       12.7  9.96    3.52  0.473      1.71     12.4
+7    12       18.0 10.2     3.57  0.936      1.69     12.9</code></pre>
+</div>
+</div>
+<p>Les matriu de covariances i correlació són les següents.</p>
+<p>Matriu de covariances</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           no2gps_12h       µgm3    pm25bcn       BCμg   tmean_12h    humi_12h
+no2gps_12h 224.980501  7.0945752 27.5499999 6.53784268 -7.96181165  55.1642247
+µgm3         7.094575 84.2432451  0.6042391 0.14306488  0.56634350   4.4607924
+pm25bcn     27.550000  0.6042391 13.4153992 1.62509214  0.63144158  12.9326592
+BCμg         6.537843  0.1430649  1.6250921 0.37813640  0.06300273   4.2908463
+tmean_12h   -7.961812  0.5663435  0.6314416 0.06300273  9.36038341  -0.1041761
+humi_12h    55.164225  4.4607924 12.9326592 4.29084633 -0.10417612 222.1136191</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>v_variances <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), var)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>v_variances</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 9
-  month no2bcn_12h no2gps_12h   µgm3 age_yrs pm25bcn   BCμg tmean_12h humi_12h
-  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1     1       295.       350.   5.57    21.4    1.90  0.196      4.49     153.
-2     2       169.       169.  47.1    139.    33.4   0.256      3.56     157.
-3     3        NA         NA   NA       NA     NA    NA         NA         NA 
-4     9       108.       120.  82.6     98.5   11.9   0.122      6.54     209.
-5    10       152.       183.  55.4    124.     9.91  0.235      3.45     253.
-6    11       140.       160.  97.1    130.    12.5   0.222      3.01     156.
-7    12       299.       324. 104.     153.    12.6   0.858      2.84     175.</code></pre>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>v_sd <span class="ot">&lt;-</span> dades_bcn2 <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>(.) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(no2bcn_12h,no2gps_12h,µgm3,age_yrs,pm25bcn,BCμg,tmean_12h,humi_12h), sd)</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>v_sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Facem alguns contrasts de correlació:</p>
+$$
+<span class="math display">\[\begin{cases}
+
+H_0: \rho\_{no2gps12h,BCμg} = 0\\
+
+H_1: \rho\_{no2gps12h,BCμg} &gt; 0
+
+\end{cases}\]</span>
+<p>$$</p>
+<div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 9
-  month no2bcn_12h no2gps_12h  µgm3 age_yrs pm25bcn   BCμg tmean_12h humi_12h
-  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1     1       17.2       18.7  2.36    4.62    1.38  0.443      2.12     12.4
-2     2       13.0       13.0  6.86   11.8     5.78  0.506      1.89     12.5
-3     3       NA         NA   NA      NA      NA    NA         NA        NA  
-4     9       10.4       11.0  9.09    9.92    3.45  0.349      2.56     14.4
-5    10       12.3       13.5  7.44   11.1     3.15  0.485      1.86     15.9
-6    11       11.8       12.6  9.85   11.4     3.54  0.471      1.73     12.5
-7    12       17.3       18.0 10.2    12.4     3.55  0.926      1.69     13.2</code></pre>
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  var_quant$no2gps_12h and var_quant$BCμg
+t = 47.58, df = 2242, p-value &lt; 2.2e-16
+alternative hypothesis: true correlation is greater than 0
+95 percent confidence interval:
+ 0.6911051 1.0000000
+sample estimates:
+     cor 
+0.708823 </code></pre>
+</div>
+</div>
+$$
+<span class="math display">\[\begin{cases}
+
+H_0: \rho\_{no2gps12h,pm25bcn} = 0\\
+
+H_1: \rho\_{no2gps12h,pm25bcn} &gt; 0
+
+\end{cases}\]</span>
+<p>$$</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  var_quant$no2gps_12h and var_quant$pm25bcn
+t = 27.445, df = 2242, p-value &lt; 2.2e-16
+alternative hypothesis: true correlation is greater than 0
+95 percent confidence interval:
+ 0.4750141 1.0000000
+sample estimates:
+      cor 
+0.5014728 </code></pre>
+</div>
+</div>
+$$
+<span class="math display">\[\begin{cases}
+
+H_0: \rho\_{humi12h,BCμg} = 0\\
+
+H_1: \rho\_{humi12h,BCμg} &gt; 0
+
+\end{cases}\]</span>
+<p>$$</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  var_quant$humi_12h and var_quant$BCμg
+t = 25.089, df = 2242, p-value &lt; 2.2e-16
+alternative hypothesis: true correlation is greater than 0
+95 percent confidence interval:
+ 0.4406329 1.0000000
+sample estimates:
+      cor 
+0.4681997 </code></pre>
+</div>
+</div>
+$$
+<span class="math display">\[\begin{cases}
+
+H_0: \rho\_{pm25bcn,BCμg} = 0\\
+
+H_1: \rho\_{pm25bcn,BCμg} &gt; 0
+
+\end{cases}\]</span>
+<p>$$</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  var_quant$pm25bcn and var_quant$BCμg
+t = 49.342, df = 2242, p-value &lt; 2.2e-16
+alternative hypothesis: true correlation is greater than 0
+95 percent confidence interval:
+ 0.7044473 1.0000000
+sample estimates:
+      cor 
+0.7215259 </code></pre>
+</div>
+</div>
+<p>Notem que el p-valor és menor que 0.05 en tots els casos i, per tant, podem asegurar que hi hagi correlació positiva entre aquestes dues variables.</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'fmsb'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:vcd':
+
+    oddsratio</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Notem que la contaminació de l’aire no depen del districte al que pertany la mostra.</p>
+</section>
+<section id="dades-qualitatives" class="level2">
+<h2 class="anchored" data-anchor-id="dades-qualitatives">Dades qualitatives:</h2>
+<p>Recordem que el nostre estudi volia veure la relació entre la qualitat de vida dels habitants de Barcelona i la qualitat de l’aire que respiren.</p>
+</section>
+</section>
+<section id="influència-dels-nivells-de-no2-i-pm2.5" class="level1">
+<h1>Influència dels nivells de NO2 i PM2.5</h1>
+<p>En primer lloc, com ja hem vist que la correlació entre els nivells de diòxid de nitrogen i les partícules 2.5 és prou alt, vegem si aquestes influeixen o no en l’estrès i la salut mental de la població:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Notem que el bloc de persones amb estrés elevat tendeix a tenir els nivells més alts de diòxid de nitrogen, però tampoc hi ha una tendència massa clara.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En el cas d’episodis de problemes mentals, veiem que hi ha dos blocs de persones amb molts problemes i tals que els nivells de partícules i diòxid de nitrogen són elevats.</p>
+</section>
+<section id="influència-dels-nivells-de-no2-i-bcμg" class="level1">
+<h1>Influència dels nivells de NO2 i BCμg</h1>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>De nou, no hi ha una tendència clara en com afecten els dos indicadors de l’aire en l’estres, però si cal notar que, un altre cop, trobem un grup amb prou patologies mentals sotmesos a un aire amb nivells alts de contaminació i també que el grup de població amb més freqüència de patologies tendeix a respirar un aire amb nivells més alts de diòxid de nitrogen.</p>
+</section>
+<section id="nivells-de-pm2.5-i-bcμg" class="level1">
+<h1>Nivells de PM2.5 I BCμg</h1>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Un altre cop, la variable afectada per la contaminació són les patologies mentals.</p>
+</section>
+<section id="nivells-de-pm2.5-i-dhumitat" class="level1">
+<h1>Nivells de PM2.5 i d’humitat:</h1>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En aquest cas, vegem que el factor ambiental no és massa significatiu.</p>
+<p>Com no trobam evidències significatives en les dades per contestar a la nostra pregunta inicial, estudiem si el gènere té relacio amb l’estres i el nombre de problemes de salud mental.</p>
+<section id="barplot-estres-en-funció-del-gènere" class="level2">
+<h2 class="anchored" data-anchor-id="barplot-estres-en-funció-del-gènere">Barplot estres en funció del gènere</h2>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="barplot-ocurrencia-denfermetats-mentals-en-funció-del-gènere" class="level2">
+<h2 class="anchored" data-anchor-id="barplot-ocurrencia-denfermetats-mentals-en-funció-del-gènere">Barplot ocurrencia d’enfermetats mentals en funció del gènere</h2>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="analisi_dades_bcn_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
 </section>
 <section id="conclusió" class="level1">
 <h1>Conclusió:</h1>
+<p>En primer lloc, amb les dades que tenim no podem concloure amb certesa que la contaminació de l’aire afecti a la salut mental de la població.</p>
+<p>També ens ha sorprès que certes variables com gender, age, o, fins i tot, district, no influeixin gens amb els nivells d’estres o els problemes de salut mental de la població.</p>
 </section>
 
 </main>
