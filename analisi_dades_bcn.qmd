@@ -1,19 +1,30 @@
 ---
 title: "Anàlisi de les dades"
+author: "Alba Linares i Maria Àngels Llobera"
 format: html
 editor: visual
 ---
 
-```{r}
+```{r, warning=FALSE,echo=FALSE}
+
 library(ggplot2)
+
 library(dplyr)
+
 library(tidyr)
+
 library(purrr)
+
 library(tibble)
+
 library(stringr)
+
 library(forcats)
+
 library(tidyverse)
+
 library(readr)
+
 ```
 
 # Introducció
@@ -30,9 +41,12 @@ Aquesta qüestió d'abast global és un fet que ens preocupa molt i l'objectiu d
 
 Per a respondre la pregunta anterior vàrem cercar a diverses fonts un conjunt de dades que s'adeqüés al nostre objectiu. A la plataforma https://www.kaggle.com/datasets hi vàrem trobar el nostre dataset idoni: ''Air Pollution and Mental Health" (https://www.kaggle.com/datasets/thedevastator/air-pollution-and-mental-health). En aquest conjunt de dades es recopila informació per a estudiar la influència de la contaminació de l'aire en la salut mental de la població.
 
-```{r}
+```{r,echo=FALSE}
+
 dades_bcn <- read_csv("dades_bcn.csv")
+
 head(dades_bcn)
+
 ```
 
 ## Ajustament
@@ -41,59 +55,159 @@ D'aquest conjunt de dades, en vàrem decidir extreure algunes variables, atès q
 
 Per tant, vàrem seleccionar les següents variables
 
--   el mes i l'any de realització de l'enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.
--   el benestar i l'estrès de la persona enquestada
--   dades sobre la qualitat de l'aire i de l'ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s'enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l'aire i del clima.
--   dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l'afecta més o manco la contaminació.
+- el mes i l'any de realització de l'enquesta, per a determinar si aquest fet afecta o no a la qualitat de vida.
+
+- l'ocurrencia de problemes mentals i l'estrès de la persona enquestada
+
+- dades sobre la qualitat de l'aire i de l'ambient: els nivells de NO2 a la ciutat de Barcelona, NO2 a la zona on s'enquesta a la persona, micrograms per metre cúbic, nivells de partícules (PM2.5) a la ciutat, nivells de carboni negre (BC), temperatura mitjana durant 12 hores, humitat durant 12 hores. Aquestes variables serveixen per a mesurar la qualitat de l'aire i del clima.
+
+- dades personals: districte de la ciutat on viu, gènere i edat. També volíem estudiar diversos perfils i veure si algun l'afecta més o manco la contaminació.
 
 Notem que com el nostre conjunt de dades ja estava prou ordenat (les files eren observacions i a cada columna trobàvem una variable), vàrem poder usar la gramàtica Tidyverse.
 
-```{r}
-dades_bcn2 <- dades_bcn %>% 
-  select(year,month,bienestar,estres,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)
+```{r,echo=FALSE}
 
-dades_bcn2
+dades_bcn2 <- dades_bcn %>%
+
+select(year,month,occurrence_mental,estres,no2gps_12h,district,µgm3,age_yrs,gender,pm25bcn,BCμg,tmean_12h,humi_12h)
+
 ```
 
-
-Notem que el nostre tibble no té la forma desitjada (considera com a variables numèriques o characters allò que nosaltres considerem factors). Canviam els valors de les variables bienestar i estres de un valor numèric a "Baix", "Mitjà" o "Alt" depenent del rang al que pertany.
+Notem que el nostre tibble no té la forma desitjada (considera com a variables numèriques o characters allò que nosaltres considerem factors). Canviam els valors de les variables occurrence_mental i estres de un valor numèric a "Baix", "Mitjà" o "Alt" depenent del rang al que pertany.
 
 ```{r}
-dades_bcn2 <- dades_bcn2 %>%
-  na.omit(.) %>% 
-  mutate(bienestar = cut(as.numeric(bienestar), breaks =  c(0,3,7,10), labels = c("Bajo","Medio","Alto"), include.lowest = TRUE))%>%
-  mutate(estres = cut(as.numeric(estres), breaks =  c(1,3,7,10), labels = c("Bajo","Medio","Alto"), include.lowest = TRUE)) %>% 
-  mutate(age_yrs = cut(as.numeric(age_yrs), breaks =  c(18,30,45,65,80),labels = c("Joven","Adulto Grupo 1","Adulto Grupo 2","Anciano"), include.lowest = TRUE))
 
-dades_bcn2
-``` 
+dades_bcn2 <- dades_bcn2 %>%
+
+na.omit(.) %>%
+
+mutate(occurrence_mental = cut(as.numeric(occurrence_mental), breaks = c(0,3,8,14), labels = c("Bajo","Medio","Alto"), include.lowest = TRUE))%>%
+
+mutate(estres = cut(as.numeric(estres), breaks = c(1,3,7,10), labels = c("Bajo","Medio","Alto"), include.lowest = TRUE)) %>%
+
+mutate(age_yrs = cut(as.numeric(age_yrs), breaks = c(18,30,45,65,80),labels = c("Joven","Adulto Grupo 1","Adulto Grupo 2","Anciano"), include.lowest = TRUE))
+
+```
 
 Mutam les variables district i gender a factor.
 
-```{r}
+```{r,echo=FALSE}
+
 dades_bcn2 <- dades_bcn2 %>%
-  mutate(district = as.factor(district))%>%
-  mutate(gender = as.factor(gender))
-dades_bcn2
+
+mutate(district = as.factor(district))%>%
+
+mutate(gender = as.factor(gender))
+
+```
+
+Canviam el valor de la variable district: Agrupam els districtes en funció de la zona a la que pertanyen.
+
+```{r}
+
+dades_bcn2 <- dades_bcn2 %>%
+
+na.omit() %>%
+
+mutate(district = case_when(
+
+district == "Gràcia" ~ "Centre",
+
+district == "Ciutat Vella" ~ "Est",
+
+district == "Eixample" ~ "Centre",
+
+district == "Sant Andreu" ~ "Nord",
+
+district == "Horta-Guinardo" ~ "Nord",
+
+district == "Sarria Sant-Gervasi" ~ "Oest",
+
+district == "Sant Martí" ~ "Est",
+
+district == "Les Corts " ~ "Oest",
+
+district == "Nou Barris" ~ "Nord",
+
+district == "Sants-Montjuïc" ~ "Sud",
+
+district == "16" ~ "Sud"
+
+)) %>%
+
+mutate(district = as.factor(district))
+
+```
+
+Finalment, la taula de dades amb les que farem feina és la següent:
+
+```{r,echo=FALSE}
+
+glimpse(dades_bcn2)
+
+```
+
+Vegem la distribució de les dades en funcio de l'edat i del districte mitjançant un diagrama de mosaic.
+
+```{r,echo=FALSE}
+
+library(vcd)
+
+a<- dades_bcn2 %>%
+
+select(age_yrs,district) %>%
+
+na.omit()
+
+a2<- table(a)
+
+mosaicplot(a2,shade=TRUE, main="")
+
 ```
 
 ## Característiques finals
 
 Estudiem ara com és el nostre tibble. Notem que tenim 3.348 observacions que depenen de 14 variables diferents:
 
--   year: any de l'enquesta (qualitativa). Pot prendre 2 valors: 2020 o 2021
--   month: mes de l'enquesta (qualitativa). Només pren 7 possibles valors (1,2,3,9,10,11,12)
--   bienestar: respostes de l'enquesta de benestar (quantitativa). Pot prendre 3 valors: Bajo, Medio o Alto.
--   estres: Respostes de l'enquesta sobre els nivells d'estrès (qualitativa). Pren els mateixos valors que la variable anterior. Notem que ambdues variables qualitatives es poden considerar ordinals.
--   no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores (quantitativa).
--   district: Districte de Barcelona on es va realitzar l'enquesta (variable qualitativa). Hi ha 11 districtes: 16, Ciutat Vella, Eixample, Gràcia, Horta-Guinardo, Les Corts, Nou Barris, Sant Andreu, Sant Martí, Sants-Montjuïc, Sarria Sant-Gervasi.
--   µgm3: Micrograms per metre cúbic (quantitativa)
--   age_yrs: Edat del participant en anys (quantitativa). Pren valors enters entre 18 i 76.
--   gender: sexe (qualitativa). Hi ha 3 possibles resultats: "Hombre", "Mujer" i "Otra".
--   pm25bcn: Nivells de partícules (PM2.5) a Barcelona (quantitativa).
--   BCµg: Nivells de carboni negre (BC) en micrograms (quantitativa)
--   tmean_12h: Temperatura mitjana durant 12 hores (quantitativa).
--   humi_12h: Humitat durant 12 hores (quantitativa).
+- year: any de l'enquesta (qualitativa). Pot prendre 2 valors: 2020 o 2021
+
+- month: mes de l'enquesta (qualitativa). Només pren 7 possibles valors (1,2,3,9,10,11,12)
+
+- ocurrence_mental: respostes de l'enquesta de benestar (quantitativa). Pot prendre 3 valors: Bajo, Medio o Alto.
+
+- estres: Respostes de l'enquesta sobre els nivells d'estrès (qualitativa). Pren els mateixos valors que la variable anterior. Notem que ambdues variables qualitatives es poden considerar ordinals.
+
+- no2gps_12h: Nivells de diòxid de nitrogen (NO2) a les ubicacions GPS durant 12 hores (quantitativa).
+
+- district: la zona on es troba el districte de Barcelona on es va realitzar l'enquesta (variable qualitativa). Hi ha 5 zones: "Nord", "Est", "Sud", "Oest", "Centre".
+
+- µgm3: Micrograms per metre cúbic (quantitativa)
+
+- age_yrs: Grup d'edat al que pertany(variable qualitativa): "Joven","Adulto Grupo 1","Adulto Grupo 2" o "Anciano".
+
+- gender: sexe (qualitativa). Hi ha 3 possibles resultats: "Hombre", "Mujer" i "Otra".
+
+- pm25bcn: Nivells de partícules (PM2.5) a Barcelona (quantitativa).
+
+- BCµg: Nivells de carboni negre (BC) en micrograms (quantitativa)
+
+- tmean_12h: Temperatura mitjana durant 12 hores (quantitativa).
+
+- humi_12h: Humitat durant 12 hores (quantitativa).
+
+## Significat de les dades ambientals(variables quantitatives)
+
+El NO2 és un gas que es produeix a partir de la combustió de combustibles fòssils i és un contaminant de l'aire.
+
+Les partícules en suspensió (PM) són un component important de la contaminació de l'aire
+
+Les partícules fines PM2.5 són partícules de mida molt petita que poden penetrar profundament als pulmons i causar problemes respiratoris i altres efectes adversos per a la salut.
+
+El carboni negre (BC) és un component de la contaminació de l'aire i es genera per la combustió incompleta de combustibles fòssils.
+
+La temperatura pot influir en la qualitat de l'aire, ja que les condicions climàtiques poden afectar la dispersió de contaminants i la formació d'ozó.
+
+L'humitat pot influir en la qualitat de l'aire en relació amb la formació de partícules i la concentració de determinats contaminants.
 
 # Anàlisi multivariant exploratòria de les dades
 
@@ -106,34 +220,48 @@ En primer lloc, de les nostres dades quantitatives, en calcularem el valor esper
 Vector de valors esperats:
 
 ```{r,echo=FALSE}
-valor_esperat <- dades_bcn2 %>% 
-  group_by(month) %>% 
-  na.omit(.) %>% 
-  summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), mean)
+
+valor_esperat <- dades_bcn2 %>%
+
+group_by(month) %>%
+
+na.omit(.) %>%
+
+summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), mean)
 
 valor_esperat
+
 ```
 
 Vector de variances:
 
 ```{r,echo=FALSE}
-v_variances <- dades_bcn2 %>% 
-  group_by(month) %>% 
-  na.omit(.) %>% 
-  summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), var)
+
+v_variances <- dades_bcn2 %>%
+
+group_by(month) %>%
+
+na.omit(.) %>%
+
+summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), var)
 
 v_variances
-```
 
+```
 Vector de desviacions típiques:
 
 ```{r,echo=FALSE}
-v_sd <- dades_bcn2 %>% 
-  group_by(month) %>% 
-  na.omit(.) %>% 
-  summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), sd)
+
+v_sd <- dades_bcn2 %>%
+
+group_by(month) %>%
+
+na.omit(.) %>%
+
+summarise_at(vars(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h), sd)
 
 v_sd
+
 ```
 
 Les matriu de covariances i correlació són les següents.
@@ -141,73 +269,421 @@ Les matriu de covariances i correlació són les següents.
 Matriu de covariances
 
 ```{r, echo=FALSE}
-var_quant <- dades_bcn2 %>% 
-  na.omit(.) %>% 
-  select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h)
+
+var_quant <- dades_bcn2 %>%
+
+na.omit(.) %>%
+
+select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h)
 
 cov(var_quant)
-  
-```
-Matriu de correlació:
 
-```{r, echo=FALSE}
-cor(var_quant)
 ```
-```{r}
-library(ggcorrplot)
+
+```{r,echo=FALSE}
+
+library(GGally)
+
 dades_bcn2 %>%
-  na.omit(.) %>% 
-  select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h) %>% 
-  cor(.) %>% 
-  ggcorrplot(., hc.order = TRUE,
-        type = "lower",
-        colors = c("#6D9EC1",
-                    "yellow", "#E46726"))
+
+na.omit(.) %>%
+
+select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h) %>%
+
+ggpairs()
+
 ```
 
+```{r,echo=FALSE}
+
+library(ggcorrplot)
+
+dades_bcn2 %>%
+
+na.omit(.) %>%
+
+select(no2gps_12h,µgm3,pm25bcn,BCμg,tmean_12h,humi_12h) %>%
+
+cor(.) %>%
+
+ggcorrplot(., hc.order = TRUE, type = "lower", colors = c("#6D9EC1","yellow", "#E46726"))
+
+```
 
 Facem alguns contrasts de correlació:
 
-Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i els nivells de carboni negre (BC) en micrograms.
+$$\begin{cases}
 
-```{r}
+H_0: \rho\_{no2gps12h,BCμg} = 0\\
+
+H_1: \rho\_{no2gps12h,BCμg} > 0
+
+\end{cases}$$
+
+```{r,echo=FALSE}
+
 cor.test(var_quant$no2gps_12h,var_quant$BCμg,alternative="greater")
+
 ```
 
-Notem que el p-valor és menor que 0.05 i, per tant, podem asegurar que hi hagi correlació positiva entre aquestes dues variables.
+$$\begin{cases}
 
-Facem un test per veure si hi ha correlació positiva entre el nivell de diòxid de nitrogen i el nivell de partícules.
+H_0: \rho\_{no2gps12h,pm25bcn} = 0\\
 
-```{r}
-cor.test(var_quant$no2bcn_12h,var_quant$pm25bcn,alternative="greater")
+H_1: \rho\_{no2gps12h,pm25bcn} > 0
+
+\end{cases}$$
+
+```{r,echo=FALSE}
+
+cor.test(var_quant$no2gps_12h,var_quant$pm25bcn,alternative="greater")
+
 ```
 
-Notem que el p-valor és menor que 0.05 i per tant podem dir que hi ha correlació positiva entre aquestes dues variables.
+$$\begin{cases}
+
+H_0: \rho\_{humi12h,BCμg} = 0\\
+
+H_1: \rho\_{humi12h,BCμg} > 0
+
+\end{cases}$$
+
+```{r,echo=FALSE}
+
+cor.test(var_quant$humi_12h,var_quant$BCμg,alternative="greater")
+
+```
+
+$$\begin{cases}
+
+H_0: \rho\_{pm25bcn,BCμg} = 0\\
+
+H_1: \rho\_{pm25bcn,BCμg} > 0
+
+\end{cases}$$
+
+```{r,echo=FALSE}
+
+cor.test(var_quant$pm25bcn,var_quant$BCμg,alternative="greater")
+
+```
+
+Notem que el p-valor és menor que 0.05 en tots els casos i, per tant, podem asegurar que hi hagi correlació positiva entre aquestes dues variables.
+
+```{r,echo=FALSE}
+
+library(fmsb)
+
+#Per tenir-les totes juntes:
+
+noms = c("Nord", "Sud", "Est", "Oest", "Centre")
+
+no2_N= mean(dades_bcn2$no2gps_12h[dades_bcn2$district=="Nord"], na.rm = TRUE)
+
+no2_S= mean(dades_bcn2$no2gps_12h[dades_bcn2$district=="Sud"], na.rm = TRUE)
+
+no2_E= mean(dades_bcn2$no2gps_12h[dades_bcn2$district=="Est"], na.rm = TRUE)
+
+no2_O= mean(dades_bcn2$no2gps_12h[dades_bcn2$district=="Oest"], na.rm = TRUE)
+
+no2_C= mean(dades_bcn2$no2gps_12h[dades_bcn2$district=="Centre"], na.rm = TRUE)
+
+dades_no2 = c(no2_N,no2_S,no2_C,no2_O,no2_E)
+
+µgm3_N= mean(dades_bcn2$µgm3[dades_bcn2$district=="Nord"], na.rm = TRUE)
+
+µgm3_S= mean(dades_bcn2$µgm3[dades_bcn2$district=="Sud"], na.rm = TRUE)
+
+µgm3_E= mean(dades_bcn2$µgm3[dades_bcn2$district=="Est"], na.rm = TRUE)
+
+µgm3_O= mean(dades_bcn2$µgm3[dades_bcn2$district=="Oest"], na.rm = TRUE)
+
+µgm3_C= mean(dades_bcn2$µgm3[dades_bcn2$district=="Centre"], na.rm = TRUE)
+
+dades_µgm3 = c(µgm3_N,µgm3_S,µgm3_C,µgm3_O,µgm3_E)
+
+pm25bcn_N= mean(dades_bcn2$pm25bcn[dades_bcn2$district=="Nord"], na.rm = TRUE)
+
+pm25bcn_S= mean(dades_bcn2$pm25bcn[dades_bcn2$district=="Sud"], na.rm = TRUE)
+
+pm25bcn_E= mean(dades_bcn2$pm25bcn[dades_bcn2$district=="Est"], na.rm = TRUE)
+
+pm25bcn_O= mean(dades_bcn2$pm25bcn[dades_bcn2$district=="Oest"], na.rm = TRUE)
+
+pm25bcn_C= mean(dades_bcn2$pm25bcn[dades_bcn2$district=="Centre"], na.rm = TRUE)
+
+dades_pm25bcn = c(pm25bcn_N,pm25bcn_S,pm25bcn_C,pm25bcn_O,pm25bcn_E)
+
+BCμg_N= mean(dades_bcn2$BCμg[dades_bcn2$district=="Nord"], na.rm = TRUE)
+
+BCμg_S= mean(dades_bcn2$BCμg[dades_bcn2$district=="Sud"], na.rm = TRUE)
+
+BCμg_E= mean(dades_bcn2$BCμg[dades_bcn2$district=="Est"], na.rm = TRUE)
+
+BCμg_O= mean(dades_bcn2$BCμg[dades_bcn2$district=="Oest"], na.rm = TRUE)
+
+BCμg_C= mean(dades_bcn2$BCμg[dades_bcn2$district=="Centre"], na.rm = TRUE)
+
+dades_BCμg = c(BCμg_N,BCμg_S,BCμg_C,BCμg_O,BCμg_E)
+
+tmean_12h_N= mean(dades_bcn2$tmean_12h[dades_bcn2$district=="Nord"], na.rm = TRUE)
+
+tmean_12h_S= mean(dades_bcn2$tmean_12h[dades_bcn2$district=="Sud"], na.rm = TRUE)
+
+tmean_12h_E= mean(dades_bcn2$tmean_12h[dades_bcn2$district=="Est"], na.rm = TRUE)
+
+tmean_12h_O= mean(dades_bcn2$tmean_12h[dades_bcn2$district=="Oest"], na.rm = TRUE)
+
+tmean_12h_C= mean(dades_bcn2$tmean_12h[dades_bcn2$district=="Centre"], na.rm = TRUE)
+
+dades_tmean_12h = c(tmean_12h_N,tmean_12h_S,tmean_12h_C,tmean_12h_O,tmean_12h_E)
+
+humi_12h_N= mean(dades_bcn2$humi_12h[dades_bcn2$district=="Nord"], na.rm = TRUE)
+
+humi_12h_S= mean(dades_bcn2$humi_12h[dades_bcn2$district=="Sud"], na.rm = TRUE)
+
+humi_12h_E= mean(dades_bcn2$humi_12h[dades_bcn2$district=="Est"], na.rm = TRUE)
+
+humi_12h_O= mean(dades_bcn2$humi_12h[dades_bcn2$district=="Oest"], na.rm = TRUE)
+
+humi_12h_C= mean(dades_bcn2$humi_12h[dades_bcn2$district=="Centre"], na.rm = TRUE)
+
+dades_humi_12h = c(humi_12h_N,humi_12h_S,humi_12h_C,humi_12h_O,humi_12h_E)
+
+vec_max = 100
+
+vec_min = 0
+
+dades_no2 = data.frame(rbind(vec_max, vec_min, dades_no2))
+
+dades_µgm3 = data.frame(rbind(vec_max, vec_min, dades_µgm3))
+
+dades_pm25bcn = data.frame(rbind(vec_max, vec_min, dades_pm25bcn))
+
+dades_BCμg = data.frame(rbind(vec_max, vec_min, dades_BCμg))
+
+dades_tmean_12h = data.frame(rbind(vec_max, vec_min, dades_tmean_12h))
+
+dades_humi_12h = data.frame(rbind(vec_max, vec_min, dades_humi_12h))
+
+colnames(dades_no2) = noms
+
+colnames(dades_µgm3) = noms
+
+colnames(dades_pm25bcn) = noms
+
+colnames(dades_BCμg) = noms
+
+colnames(dades_tmean_12h) = noms
+
+colnames(dades_humi_12h) = noms
+
+par(mar = c(0.5,0.5,1,0.5))
+
+par(mfrow = c(3,3))
+
+par(cex = 0.7)
+
+radarchart(dades_no2, axistype = 2,pcol = rgb(0.09, 0.45, 0.8, 0.75), plwd = 4,cglcol="grey", cglty=1, axislabcol="grey", cglwd=1,vlcex = 0.8,title = "no2")
+
+radarchart(dades_µgm3, axistype = 2,pcol = rgb(0.09, 0.45, 0.8, 0.75), plwd = 4,cglcol="grey", cglty=1, axislabcol="grey", cglwd=1,vlcex = 0.8,title = "µgm3")
+
+radarchart(dades_pm25bcn, axistype = 2,pcol = rgb(0.09, 0.45, 0.8, 0.75), plwd = 4,cglcol="grey", cglty=1, axislabcol="grey", cglwd=1,vlcex = 0.8,title = "pm25bcn")
+
+radarchart(dades_BCμg, axistype = 2,pcol = rgb(0.09, 0.45, 0.8, 0.75), plwd = 4,cglcol="grey", cglty=1, axislabcol="grey", cglwd=1,vlcex = 0.8,title = "BCμg")
+
+radarchart(dades_tmean_12h, axistype = 2,pcol = rgb(0.09, 0.45, 0.8, 0.75), plwd = 4,cglcol="grey", cglty=1, axislabcol="grey", cglwd=1,vlcex = 0.8,title = "tmean_12h")
+
+radarchart(dades_humi_12h, axistype = 2, pcol = rgb(0.09, 0.45, 0.8, 0.75), plwd = 4, cglcol="grey", cglty=1, axislabcol="grey", cglwd=1,vlcex = 0.8,title = "humi_12h")
+
+```
+
+Notem que la contaminació de l'aire no depen del districte al que pertany la mostra.
 
 ## Dades qualitatives:
 
-Recordem que el nostre estudi volia veure la relació entre la qualitat de vida dels habitants de Barcelona i la qualitat de l'aire que respiren. Vegem si trobem similituds en els perfils de la població:
+Recordem que el nostre estudi volia veure la relació entre la qualitat de vida dels habitants de Barcelona i la qualitat de l'aire que respiren.
 
+# Influència dels nivells de NO2 i PM2.5
 
-```{r}
-library(StatMatch)
-library(proxy)
+En primer lloc, com ja hem vist que la correlació entre els nivells de diòxid de nitrogen i les partícules 2.5 és prou alt, vegem si aquestes influeixen o no en l'estrès i la salut mental de la població:
 
-#ordenam per edat, per veure si hi ha similituds
-bienestar_estres <- dades_bcn2 %>% 
-  arrange(age_yrs) %>% 
-  select(bienestar,estres) 
+```{r,echo=FALSE}
 
-distancia = distance(bienestar_estres)
-distancia
+library("ggdensity")
 
-#library(philentropy)
-#distancia <- distance(bienestar_estres, method = "bhattacharyya")
+ggplot( na.omit(dades_bcn2), aes(no2gps_12h,pm25bcn, fill = estres)) +
 
-library(factoextra)
-fviz_dist(as.dist(distancia))
-  
-  
+geom_hdr(xlim = c(0, 100), ylim = c(0, 30)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(estres))
+
+```
+
+Notem que el bloc de persones amb estrés elevat tendeix a tenir els nivells més alts de diòxid de nitrogen, però tampoc hi ha una tendència massa clara.
+
+```{r,echo=FALSE}
+
+library("ggdensity")
+
+ggplot( na.omit(dades_bcn2), aes(no2gps_12h,pm25bcn, fill = occurrence_mental)) +
+
+geom_hdr(xlim = c(0, 100), ylim = c(0, 30)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(occurrence_mental))
+
+```
+
+En el cas d'episodis de problemes mentals, veiem que hi ha dos blocs de persones amb molts problemes i tals que els nivells de partícules i diòxid de nitrogen són elevats.
+
+# Influència dels nivells de NO2 i BCμg
+
+```{r,echo=FALSE}
+
+library("ggdensity")
+
+ggplot( na.omit(dades_bcn2), aes(no2gps_12h,BCμg, fill = estres)) +
+
+geom_hdr(xlim = c(0, 100), ylim = c(0, 10)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(estres))
+
+```
+
+```{r,echo=FALSE}
+
+library("ggdensity")
+
+ggplot( na.omit(dades_bcn2), aes(no2gps_12h,BCμg, fill = occurrence_mental)) +
+
+geom_hdr(xlim = c(0, 100), ylim = c(0, 10)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(occurrence_mental))
+
+```
+
+De nou, no hi ha una tendència clara en com afecten els dos indicadors de l'aire en l'estres, però si cal notar que, un altre cop, trobem un grup amb prou patologies mentals sotmesos a un aire amb nivells alts de contaminació i també que el grup de població amb més freqüència de patologies tendeix a respirar un aire amb nivells més alts de diòxid de nitrogen.
+
+# Nivells de PM2.5 I BCμg
+
+```{r,echo=FALSE}
+
+library("ggdensity")
+
+ggplot( na.omit(dades_bcn2), aes(pm25bcn,BCμg, fill = estres)) +
+
+geom_hdr(xlim = c(0, 50), ylim = c(0, 10)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(estres))
+
+```
+
+```{r,echo=FALSE}
+
+library("ggdensity")
+
+ggplot( na.omit(dades_bcn2), aes(pm25bcn,BCμg, fill = occurrence_mental)) +
+
+geom_hdr(xlim = c(0, 50), ylim = c(0, 10)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(occurrence_mental))
+
+```
+
+Un altre cop, la variable afectada per la contaminació són les patologies mentals.
+
+# Nivells de PM2.5 i d'humitat:
+
+```{r,echo=FALSE}
+
+ggplot( na.omit(dades_bcn2), aes(pm25bcn,humi_12h, fill = estres)) +
+
+geom_hdr(xlim = c(0, 50), ylim = c(0, 100)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(estres))
+
+```
+
+```{r,echo=FALSE}
+
+ggplot( na.omit(dades_bcn2), aes(pm25bcn,humi_12h, fill = occurrence_mental)) +
+
+geom_hdr(xlim = c(0, 50), ylim = c(0, 100)) +
+
+geom_point(shape = 21) +
+
+facet_wrap(vars(occurrence_mental))
+
+```
+
+En aquest cas, vegem que el factor ambiental no és massa significatiu.
+
+Com no trobam evidències significatives en les dades per contestar a la nostra pregunta inicial, estudiem si el gènere té relacio amb l'estres i el nombre de problemes de salud mental.
+
+## Barplot estres en funció del gènere
+
+```{r,echo=FALSE}
+
+dades_bcn2 %>% ggplot() +
+
+geom_bar(aes(x=gender, fill=estres),
+
+position="fill") +
+
+guides(fill = guide_legend(title = "estres")) +
+
+labs(y="Proporció", x="gender") +
+
+theme_bw() +
+
+theme(axis.text = element_text(size=20),
+
+axis.title = element_text(size=20, face = "bold"),
+
+legend.title = element_text(size=20))
+
+```
+
+## Barplot ocurrencia d'enfermetats mentals en funció del gènere
+
+```{r,echo=FALSE}
+
+dades_bcn2 %>% ggplot() +
+
+geom_bar(aes(x=gender, fill=occurrence_mental),
+
+position="fill") +
+
+guides(fill = guide_legend(title = "occurrence_mental")) +
+
+labs(y="Proporció", x="gender") +
+
+theme_bw() +
+
+theme(axis.text = element_text(size=20),
+
+axis.title = element_text(size=20, face = "bold"),
+
+legend.title = element_text(size=20))
+
 ```
 
 # Conclusió:
+
+En primer lloc, amb les dades que tenim no podem concloure amb certesa que la contaminació de l'aire afecti a la salut mental de la població.
+
+També ens ha sorprès que certes variables com gender, age, o, fins i tot, district, no influeixin gens amb els nivells d'estres o els problemes de salut mental de la població.
